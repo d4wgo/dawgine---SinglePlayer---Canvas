@@ -7,6 +7,8 @@ canvas resizing and such
 gravity
 world positional differentiation
 */
+//image refrences
+//---------------
 var gameObjects = [];
 //player class
 //syntax:
@@ -18,6 +20,9 @@ class Player{
         this.y = c;
         this.sizeX = d;
         this.sizeY = e;
+        this.image = null;
+        this.color = null;
+        this.gravity = null;
     }
 }
 //gameObject
@@ -31,7 +36,18 @@ class GameObject{
         this.y = c;
         this.sizeX = d;
         this.sizeY = e;
+        this.image = null;
+        this.color = null;
+        this.gravity = null;
     }
+}
+function findObject(id){
+    for(var i = 0; i < gameObjects.length; i++){
+        if(gameObjects[i].id == id){
+            return gameObjects[i];
+        }
+    }
+    return null;
 }
 //rayscan
 //syntax:
@@ -58,8 +74,8 @@ var canvas = document.getElementById(canvasName);
 var ctx = canvas.getContext("2d");
 var virtualHeight = 900; //the width of the canvas things are being drawn on before scaling
 var virtualWidth = 1600; //the height of the canvas things are being drawn on before scaling
-fullScreen = true; //should the canvas fill the whole screen - make sure body and the canvas have a margin and padding of 0
-fitAspectRatioFullscreen = false; //should the aspect ratio of the virtual canvas be forced - this removes distortion of stretching
+fullScreen = false; //should the canvas fill the whole screen - make sure body and the canvas have a margin and padding of 0
+fitAspectRatioFullscreen = true; //should the aspect ratio of the virtual canvas be forced - this removes distortion of stretching
 fitDiv = false; //if you want the canvas to be in a part of the page instead of the whole page
 /*recomended css settings for canvas
     padding:0;
@@ -113,16 +129,19 @@ var fov = { //fov is only used for overview follow games
 }
 var presetWorldImage = true; //can be set to true or false
 var worldImage = new Image();
-worldImage.src = "http://logicsimplified.com/newgames/wp-content/uploads/2017/09/shovelknight.jpg"; //world background image
+worldImage.src = "http://logicsimplified.com/newgames/wp-content/uploads/2017/09/shovelknight.jpg"; //world background image replace with your own
 //the start function -  where every game object is made before the game starts
 var me; //player var for use in whole game
 function start(){
-    me = new Player("me",800,450,20,20);
-    me.color = "red";
-    me.image = null;
+    me = new Player("me",400,400,20,20);
+    gameObjects.push(new GameObject("pepo",600,400,30,30));
+    findObject("pepo").image = pepo;
 }
 start();
+var prevTime = Date.now();
 function runGame(){
+    var delta = Date.now() - prevTime;
+    prevTime = Date.now();
     draw();
     window.requestAnimationFrame(runGame);
 }
@@ -135,19 +154,36 @@ function draw(){
             ctx.drawImage(worldImage,0,0,canvas.width,canvas.height);
         }
         else{
-            
+            ctx.drawImage(worldImage,me.x - fov.x/2,me.y - fov.y/2,fov.x,fov.y,0,0,canvas.width,canvas.height);
         }
     }
     if(overview || nFOverview){
         if(me.color != null){
             ctx.fillStyle = me.color;
-            ctx.fillRect((me.x * scaleX) - me.sizeX/2,(me.y * scaleY) - me.sizeY/2,me.sizeX,me.sizeY);
+            if(nFOverview){
+                ctx.fillRect((me.x - me.sizeX/2) * scaleX,(me.y - me.sizeY/2) * scaleY,me.sizeX * scaleX,me.sizeY * scaleY);
+            }
+            else if(overview){
+                ctx.fillRect(canvas.width/2 - (me.sizeX/2) * scaleX,canvas.height/2 - (me.sizeY/2) * scaleY,me.sizeX * scaleX,me.sizeY * scaleY);
+            }
         }
         else if(me.image != null){
-            ctx.drawImage(me.image,(me.x * scaleX) - me.sizeX/2,(me.y * scaleY) - me.sizeY/2,me.sizeX,me.sizeY);
+            ctx.drawImage(me.image,(me.x - me.sizeX/2) * scaleX,(me.y - me.sizeY/2) * scaleY,me.sizeX * scaleX,me.sizeY * scaleY);
+        }
+    }
+    for(var i = 0; i < gameObjects.length; i++){
+        var tempObject = gameObjects[i];
+        if(tempObject.color != null){
+            ctx.fillStyle = tempObject.color;
+            ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+        else if(tempObject.image != null){
+            ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
     }
 }
+
+//game functions go down here
 
 
 
