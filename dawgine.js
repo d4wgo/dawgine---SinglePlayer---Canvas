@@ -267,29 +267,46 @@ var presetWorldImage = false; //can be set to true or false
 var worldImage = new Image();
 worldImage.src = "http://logicsimplified.com/newgames/wp-content/uploads/2017/09/shovelknight.jpg"; //world background image replace with your own
 //the start function -  where every game object is made before the game starts
+var scene = 1;
 function start(){
-    gameObjects.push(new GameObject("me",400,400,10,10));
-    //create objects
-    
-    //--------------
+    scene = 1;
+    switchScene(scene);
 }
 start();
 var prevTime = Date.now();
-var totalTime = 0;
-var fps = 0;
+var delta;
 function runGame(){
-    var delta = Date.now() - prevTime;
-    totalTime += delta;
-    fps++;
-    if(totalTime >= 100){
-        console.log(fps * 10);
-        totalTime = 0;
-        fps = 0;
-    }
+    delta = Date.now() - prevTime;
     prevTime = Date.now();
-    //do stuff
-
-    //--------
+    switch(scene){
+        case 1:
+            scene1(null);
+            break;
+        case 2:
+            scene2(null);
+            break;
+        case 3:
+            scene3(null);
+            break;
+        case 4:
+            scene4(null);
+            break;
+        case 5:
+            scene5(null);
+            break;
+        case 6:
+            scene6(null);
+            break;
+        case 7:
+            scene7(null);
+            break;
+        case 8:
+            scene8(null);
+            break;
+        case 9:
+            scene9(null);
+            break;
+    }
     draw();
     window.requestAnimationFrame(runGame);
 }
@@ -338,7 +355,110 @@ function draw(){
         }
     }
 }
+function switchScene(a){
+    gameObjects = [];
+    nullObjects = [];
+    scene = a;
+    switch(a){
+        case 1:
+            scene1("start");
+            break;
+        case 2:
+            scene2("start");
+            break;
+        case 3:
+            scene3("start");
+            break;
+        case 4:
+            scene4("start");
+            break;
+        case 5:
+            scene5("start");
+            break;
+        case 6:
+            scene6("start");
+            break;
+        case 7:
+            scene7("start");
+            break;
+        case 8:
+            scene8("start");
+            break;
+        case 9:
+            scene9("start");
+            break;
+    }
+}
+function scene1(a){
+    if(a == "start"){
+        //start function for scene1
+    }
+    else{
+        //logic for scene 1
+    }
+}
+function scene2(a){
+    if(a == "start"){
+    }
+    else{
+    }
+}
+function scene3(a){
+    if(a == "start"){
 
+    }
+    else{
+        
+    }
+}
+function scene4(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
+function scene5(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
+function scene6(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
+function scene7(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
+function scene8(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
+function scene9(a){
+    if(a == "start"){
+
+    }
+    else{
+        
+    }
+}
 //game functions go down here
 
 
