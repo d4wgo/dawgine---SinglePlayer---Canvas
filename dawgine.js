@@ -11,6 +11,7 @@ world positional differentiation
 //---------------
 var gameObjects = []; //gameobjects are seen by rayscans
 var nullObjects = []; //null objects are not seen by rayscans
+var buttons = []; //clickable buttons
 //gameObject
 //syntax:
 //new var newGO = GameObject(id,x,y,posX,posY,sizeX,sizeY);
@@ -26,6 +27,8 @@ class GameObject{
         this.color = null;
         this.gravity = null;
         this.rotation = null;
+        this.clicked = null;
+        this.hovered = null;
     }
 }
 function findObject(id){
@@ -37,6 +40,11 @@ function findObject(id){
     for(var i = 0; i < nullObjects.length; i++){
         if(nullObjects[i].id == id){
             return nullObjects[i];
+        }
+    }
+    for(var i = 0; i < buttons.length; i++){
+        if(buttons[i].id == id){
+            return buttons[i];
         }
     }
     return null;
@@ -82,61 +90,100 @@ var input = {
     seven:false,
     mouse1:false
 }
+var clickInput = {
+    w:false,
+    a:false,
+    s:false,
+    d:false,
+    up:false,
+    left:false,
+    down:false,
+    right:false,
+    space:false,
+    f:false,
+    shift:false,
+    one:false,
+    two:false,
+    three:false,
+    four:false,
+    five:false,
+    six:false,
+    seven:false,
+    mouse1:false
+};
 document.addEventListener('keydown', function(event) {
     switch(event.code){
         case "KeyW":
             input.w = true;
+            clickInput.w = true;
             break;
         case "KeyA":
             input.a = true;
+            clickInput.a = true;
             break;
         case "KeyS":
             input.s = true;
+            clickInput.s = true;
             break;
         case "KeyD":
             input.d = true;
+            clickInput.d = true;
             break;
         case "ArrowUp":
             input.up = true;
+            clickInput.up = true;
             break;
         case "ArrowLeft":
             input.left = true;
+            clickInput.left = true;
             break;
         case "ArrowDown":
             input.down = true;
+            clickInput.down = true;
             break;
         case "ArrowRight":
             input.right = true;
+            clickInput.right = true;
             break;
         case "Space":
             input.space = true;
+            clickInput.space = true;
             break;
         case "KeyF":
             input.f = true;
+            clickInput.f = true;
             break;
         case "ShiftLeft":
             input.shift = true;
+            clickInput.shift = true;
             break;
         case "Digit1":
             input.one = true;
+            clickInput.one = true;
             break;
         case "Digit2":
             input.two = true;
+            clickInput.two = true;
             break;
         case "Digit3":
             input.three = true;
+            clickInput.three = true;
             break;
         case "Digit4":
             input.four = true;
+            clickInput.four = true;
             break;
         case "Digit5":
             input.five = true;
+            clickInput.five = true;
             break;
         case "Digit6":
             input.six = true;
+            clickInput.six = true;
             break;
         case "Digit7":
             input.seven = true;
+            clickInput.seven = true;
             break;
     }
 });
@@ -200,10 +247,18 @@ document.addEventListener('keyup', function(event) {
 });
 document.addEventListener('mousedown', function(event) {
     input.mouse1 = true;
+    clickInput.mouse1 = true;
 });
 document.addEventListener('mouseup', function(event) {
     input.mouse1 = false;
 });
+document.addEventListener('mousemove', function(event) {
+    getCursorPosition(canvas,event);
+});
+var mousePos = {
+    x:0,
+    y:0
+}
 //canvas creation
 var canvasName = "myCanvas"; //replace with id of canvas within the html
 var canvas = document.getElementById(canvasName);
@@ -215,8 +270,8 @@ fitAspectRatioFullscreen = true; //should the aspect ratio of the virtual canvas
 fitDiv = false; //if you want the canvas to be in a part of the page instead of the whole page
 /*recomended css settings for canvas
     padding:0;
-    margin-bottom:0;
-    margin-top:0;
+    margin-bottom:auto;
+    margin-top:auto;
     margin-left:auto;
     margin-right:auto;
     display:block;
@@ -243,14 +298,29 @@ function fullScreenCanvas(){
 }
 function aspectRatioFullScreenCanvas(){
     var heightW = window.innerHeight;
-    canvas.height = heightW;
+    var widthW = window.innerWidth;
     var aspectR = virtualWidth / virtualHeight;
-    canvas.width = heightW * aspectR;
+    if(aspectR > widthW/heightW){
+        canvas.width = widthW;
+        canvas.height = widthW / aspectR;
+    }
+    else{
+        canvas.height = heightW;
+        canvas.width = heightW * aspectR;
+    }
 }
 function fitDivCanvas(){
     var divIn = document.getElementById("myDIV"); //replace myDiv with the div the canvas is within
     canvas.height = divIn.offsetHeight;
     canvas.height = divIn.offsetWidth;
+}
+//cursor pos
+function getCursorPosition(canvas, event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    mousePos.x = x/scaleX;
+    mousePos.y = y/scaleY;
 }
 //game type:
 //overview - the player is in the middle of the screen, and moves around the world
@@ -278,6 +348,21 @@ var delta;
 function runGame(){
     delta = Date.now() - prevTime;
     prevTime = Date.now();
+    for(var i = 0; i < buttons.length; i++){
+        var button = buttons[i];
+        if(mousePos.x <= (button.x + button.sizeX/2) && mousePos.x >= (button.x - button.sizeX/2) && mousePos.y >= (button.y - button.sizeY/2) && mousePos.y <= (button.y + button.sizeY/2)){
+            button.hovered = true;
+        }
+        else{
+            button.hovered = false;
+        }
+        if(button.hovered && clickInput.mouse1){
+            button.clicked = true;
+        }
+        else{
+            button.clicked = false;
+        }
+    }
     switch(scene){
         case 1:
             scene1(null);
@@ -307,6 +392,9 @@ function runGame(){
             scene9(null);
             break;
     }
+    Object.keys(clickInput).forEach(function(key) {
+        clickInput[key] = false;     
+    });
     draw();
     window.requestAnimationFrame(runGame);
 }
@@ -352,6 +440,16 @@ function draw(){
             ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
             ctx.rotate(-tempObject.rotation);
             ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
+        }
+    }
+    for(var i = 0; i < buttons.length; i++){
+        var tempObject = buttons[i];
+        if(tempObject.color != null){
+            ctx.fillStyle = tempObject.color;
+            ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+        else if(tempObject.image != null){
+            ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
     }
 }
