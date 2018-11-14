@@ -1,12 +1,3 @@
-/*
-goals:
-player 
-gameobjects -  position,size,type
-rayscanning
-canvas resizing and such
-gravity
-world positional differentiation
-*/
 //image refrences
 //---------------
 var gameObjects = []; //gameobjects are seen by rayscans
@@ -273,10 +264,7 @@ fitAspectRatioFullscreen = true; //should the aspect ratio of the virtual canvas
 fitDiv = false; //if you want the canvas to be in a part of the page instead of the whole page
 /*recomended css settings for canvas
     padding:0;
-    margin-bottom:auto;
-    margin-top:auto;
-    margin-left:auto;
-    margin-right:auto;
+    margin: 0 auto;
     display:block;
 */
 var scaleX;
