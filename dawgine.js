@@ -29,6 +29,8 @@ class GameObject{
         this.rotation = null;
         this.clicked = null;
         this.hovered = null;
+        this.gravityTimer = 0;
+        this.yForce = 0;
     }
 }
 function findObject(id){
@@ -66,7 +68,7 @@ function rayscan(a,b,c,d){
         checkX += Math.cos(ang);
         checkY -= Math.sin(ang);
     }
-    return false;
+    return null;
 }
 //input
 var input = {
@@ -111,6 +113,7 @@ var clickInput = {
     seven:false,
     mouse1:false
 };
+var nClick;
 document.addEventListener('keydown', function(event) {
     switch(event.code){
         case "KeyW":
@@ -363,6 +366,12 @@ function runGame(){
             button.clicked = false;
         }
     }
+    Object.keys(clickInput).forEach(function(key) {
+        if(input[key] != clickInput[key]){
+            nClick = clickInput[key];
+        }   
+    });
+    nClick = false;
     switch(scene){
         case 1:
             scene1(null);
@@ -424,6 +433,9 @@ function draw(){
     }
     for(var i = 0; i < gameObjects.length; i++){
         var tempObject = gameObjects[i];
+        if(tempObject.gravity != null){
+            applyGravity(tempObject);
+        }
         if(tempObject.rotation != null){
             ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
             ctx.rotate(tempObject.rotation);
@@ -450,6 +462,22 @@ function draw(){
         }
         else if(tempObject.image != null){
             ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+    }
+}
+function applyGravity(a){
+    if(rayscan(a.x,a.y + (a.sizeY / 2) + 1, 4.71, 2) == null){
+        a.gravityTimer += delta/1000;
+        a.y += a.gravity * a.gravityTimer;
+    }
+    else{
+        a.gravityTimer = 0;
+    }
+    if(a.yForce != 0){
+        a.y -= a.yForce * delta/8;
+        a.yForce -= delta/10;
+        if(a.yForce < 0){
+            a.yForce = 0;
         }
     }
 }
