@@ -30,6 +30,9 @@ class GameObject{
         this.textSize = 20;
         this.textOffsetY = 0;
         this.textOffsetX = 0;
+        this.parent = null;
+        this.changeX = 0;
+        this.changeY = 0;
     }
 }
 function findObject(id){
@@ -326,6 +329,7 @@ function getCursorPosition(canvas, event) {
     mousePos.x = x/scaleX;
     mousePos.y = y/scaleY;
 }
+
 //game type:
 //overview - the player is in the middle of the screen, and moves around the world
 //non-follow overview, the player is in a world where the camera doesnt follow them, the whole game world is just the window
@@ -352,6 +356,28 @@ var delta;
 function runGame(){
     delta = Date.now() - prevTime;
     prevTime = Date.now();
+    var parents = [];
+    for(var i = 0; i < gameObjects.length; i++){
+        var a = gameObjects[i];
+        if(a.parent != null){
+            if(!parents.includes(a.parent)){
+                parents.push(a.parent);
+            }
+        }
+    }
+    for(var i = 0; i < nullObjects.length; i++){
+        var a = nullObjects[i];
+        if(a.parent != null){
+            if(!parents.includes(a.parent)){
+                parents.push(a.parent);
+            }
+        }
+    }
+    for(var i = 0; i < parents.length; i++){
+        var a = parents[i];
+        a.ogy = a.y;
+        a.ogx = a.x;
+    }
     for(var i = 0; i < buttons.length; i++){
         var button = buttons[i];
         if(mousePos.x <= (button.x + button.sizeX/2) && mousePos.x >= (button.x - button.sizeX/2) && mousePos.y >= (button.y - button.sizeY/2) && mousePos.y <= (button.y + button.sizeY/2)){
@@ -406,6 +432,25 @@ function runGame(){
         clickInput[key] = false;     
     });
     draw();
+    for(var i = 0; i < parents.length; i++){
+        var a = parents[i];
+        a.changeX = a.x - a.ogx;
+        a.changeY = a.y - a.ogy;
+    }
+    for(var i = 0; i < gameObjects.length; i++){
+        var a = gameObjects[i];
+        if(a.parent != null){
+            a.x += a.parent.changeX;
+            a.y += a.parent.changeY;
+        }
+    }
+    for(var i = 0; i < nullObjects.length; i++){
+        var a = nullObjects[i];
+        if(a.parent != null){
+            a.x += a.parent.changeX;
+            a.y += a.parent.changeY;
+        }
+    }
     window.requestAnimationFrame(runGame);
 }
 window.requestAnimationFrame(runGame);
