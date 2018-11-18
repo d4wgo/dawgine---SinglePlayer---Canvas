@@ -437,6 +437,30 @@ function runGame(){
         a.changeX = a.x - a.ogx;
         a.changeY = a.y - a.ogy;
     }
+    for(var i = 0; i < parents.length; i++){
+        var a = parents[i];
+        a.ogy = a.y;
+        a.ogx = a.x;
+    }
+    for(var i = 0; i < gameObjects.length; i++){
+        var a = gameObjects[i];
+        if(a.parent != null){
+            a.x += a.parent.changeX;
+            a.y += a.parent.changeY;
+        }
+    }
+    for(var i = 0; i < nullObjects.length; i++){
+        var a = nullObjects[i];
+        if(a.parent != null){
+            a.x += a.parent.changeX;
+            a.y += a.parent.changeY;
+        }
+    }
+    for(var i = 0; i < parents.length; i++){
+        var a = parents[i];
+        a.changeX = a.x - a.ogx;
+        a.changeY = a.y - a.ogy;
+    }
     for(var i = 0; i < gameObjects.length; i++){
         var a = gameObjects[i];
         if(a.parent != null){
