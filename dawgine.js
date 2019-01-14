@@ -98,16 +98,89 @@ function deleteObject(id){
 //rayscan
 //syntax:
 //rayscan(starting x, starting y, angle, distance)
-function rayscan(a,b,c,d){
-    var checkX = a;
-    var checkY = b;
-    var ang = c;
-    for(var i = 0; i < d; i++){
+function rayscan(startX,startY,angle,dist){
+    var checkX = startX;
+    var checkY = startY;
+    var ang = angle;
+    for(var i = 0; i < dist; i++){
         for(var j = 0; j < gameObjects.length; j++){
             var objCheck = gameObjects[j];
-            if(checkX >= (objCheck.x - objCheck.sizeX/2) && checkX <= (objCheck.x + objCheck.sizeX/2) && checkY <= (objCheck.y + objCheck.sizeY/2) && checkY >= (objCheck.y - objCheck.sizeY/2)){
-                return objCheck;
-            }       
+            if(objCheck.rotation == null || objCheck.rotation == 0){
+                if(checkX >= (objCheck.x - objCheck.sizeX/2) && checkX <= (objCheck.x + objCheck.sizeX/2) && checkY <= (objCheck.y + objCheck.sizeY/2) && checkY >= (objCheck.y - objCheck.sizeY/2)){
+                    return objCheck;
+                }
+            }
+            else{
+                if(pythagTheorem(objCheck.sizeX/2,objCheck.sizeY/2) > pythagTheorem(objCheck.x - checkX, objCheck.y - checkY)){
+                    //tl
+                    var farXtL = -(objCheck.sizeX / 2);
+                    var farYtL = -(objCheck.sizeY / 2);
+                    var radiustL = pythagTheorem(farXtL,farYtL);
+                    var initRottL = Math.atan(farYtL / farXtL);
+                    var paX = (Math.cos(objCheck.rotation + initRottL) * radiustL) + objCheck.x;
+                    var paY = (Math.sin(objCheck.rotation + initRottL) * radiustL) + objCheck.y;
+                    //tr
+                    var farXtR = (objCheck.sizeX / 2);
+                    var farYtR = -(objCheck.sizeY / 2);
+                    var radiustR = pythagTheorem(farXtR,farYtR);
+                    var initRottR = Math.atan(farYtR / farXtR);
+                    var pbX = (Math.cos(objCheck.rotation + initRottR) * radiustR) + objCheck.x;
+                    var pbY = (Math.sin(objCheck.rotation + initRottR) * radiustR) + objCheck.y;
+                    //br
+                    var farXbR = (objCheck.sizeX / 2);
+                    var farYbR = (objCheck.sizeY / 2);
+                    var radiusbR = pythagTheorem(farXbR,farYbR);
+                    var initRotbR = Math.atan(farYbR / farXbR);
+                    var pcX = -(Math.cos(objCheck.rotation + initRotbR) * radiusbR) + objCheck.x;
+                    var pcY = -(Math.sin(objCheck.rotation + initRotbR) * radiusbR) + objCheck.y;
+                    //a to objCheck checker/finder
+                    var a1 = pbY - paY; 
+                    var b1 = paX - pbX; 
+                    var c1 = a1*(paX) + b1*(paY); 
+                    var pdX = Math.cos(objCheck.rotation) + checkX;
+                    var pdY = Math.sin(objCheck.rotation) + checkY;
+                    var a2 = pdY - checkY; 
+                    var b2 = checkX - pdX; 
+                    var c2 = a2*(checkX)+ b2*(checkY); 
+                    var determinant = a1*b2 - a2*b1;  
+                    var rzX = (b2*c1 - b1*c2)/determinant;         
+                    //objCheck to c checker/finder
+                    a1 = pcY - pbY; 
+                    b1 = pbX - pcX; 
+                    c1 = a1*(pbX) + b1*(pbY); 
+                    pdX = Math.cos(objCheck.rotation + 1.57) + checkX;
+                    pdY = Math.sin(objCheck.rotation + 1.57) + checkY;
+                    a2 = pdY - checkY; 
+                    b2 = checkX - pdX; 
+                    c2 = a2*(checkX)+ b2*(checkY); 
+                    determinant = a1*b2 - a2*b1;  
+                    var rz1X = (b2*c1 - b1*c2)/determinant;           
+                    //check a -> objCheck
+                    var hityes = false;
+                    if(paX < pbX){
+                        if(rzX > paX && rzX < pbX){
+                            hityes = true;
+                        }
+                    }
+                    else{
+                        if(rzX < paX && rzX > pbX){
+                            hityes = true;
+                        }
+                    }
+                    if(hityes){
+                        if(pbX < pcX){
+                            if(rz1X > pbX && rz1X < pcX){
+                                return objCheck;
+                            }
+                        }
+                        else{
+                            if(rz1X < pbX && rz1X > pcX){
+                                return objCheck;
+                            }
+                        }
+                    }
+                }
+            }
         }
         checkX += Math.cos(ang);
         checkY -= Math.sin(ang);
@@ -369,77 +442,6 @@ function getCursorPosition(canvas, event) {
 function pythagTheorem(a,b){
     return Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
 }
-var deleteFixes = [];
-function fixRotatingObjects(){
-    var resolution = 8;
-    for(var i = 0; i < deleteFixes.length; i++){
-        deleteObject(deleteFixes[i]);
-    }
-    deleteFixes = [];
-    for(var i = 0; i < gameObjects.length; i++){
-        var n1 = gameObjects[i];
-        if(n1.rotation != null){
-            var manyX = n1.sizeX / resolution;
-            var manyY = n1.sizeY / resolution;
-            for(var j = 0; j < manyY; j++){
-                for(var o = 0; o < manyX; o++){
-                    var rndA = Math.random().toString().substring(2,7);
-                    var farX = (o * resolution) - (n1.sizeX/2) + (resolution/2);
-                    var farY = (j * resolution) - (n1.sizeY/2) + (resolution/2);
-                    var radius = pythagTheorem(farX,farY);
-                    var initRot = Math.atan(farY / farX);
-                    deleteFixes.push(rndA);
-                    if(o > manyX/2){
-                        gameObjects.push(new GameObject(rndA,(Math.cos(n1.rotation + initRot) * radius) + n1.x,(Math.sin(n1.rotation + initRot) * radius) + n1.y,resolution,resolution));
-                        findObject(rndA).color = "red";
-                    }
-                    else if(o < manyX/2){
-                        gameObjects.push(new GameObject(rndA,-(Math.cos(n1.rotation + initRot) * radius) + n1.x,-(Math.sin(n1.rotation + initRot) * radius) + n1.y,resolution,resolution));
-                        findObject(rndA).color = "red";
-                    }
-                }
-            }
-        }
-    }
-    for(var i = 0; i < nullObjects.length; i++){
-        var n1 = nullObjects[i];
-        if(n1.rotateBox == true){
-            if(n1.rotation != null){
-                var manyX = n1.sizeX / resolution;
-                var manyY = n1.sizeY / resolution;
-                for(var j = 0; j < manyY; j++){
-                    for(var o = 0; o < manyX; o++){
-                        var rndA = Math.random().toString().substring(2,7);
-                        var farX = (o * resolution) - (n1.sizeX/2) + (resolution/2);
-                        var farY = (j * resolution) - (n1.sizeY/2) + (resolution/2);
-                        var radius = pythagTheorem(farX,farY);
-                        var initRot = Math.atan(farY / farX);
-                        deleteFixes.push(rndA);
-                        if(o > manyX/2){
-                            gameObjects.push(new GameObject(rndA,(Math.cos(n1.rotation + initRot) * radius) + n1.x,(Math.sin(n1.rotation + initRot) * radius) + n1.y,resolution,resolution));
-                            findObject(rndA).color = "red";
-                        }
-                        else if(o < manyX/2){
-                            gameObjects.push(new GameObject(rndA,-(Math.cos(n1.rotation + initRot) * radius) + n1.x,-(Math.sin(n1.rotation + initRot) * radius) + n1.y,resolution,resolution));
-                            findObject(rndA).color = "red";
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-//game type:
-//overview - the player is in the middle of the screen, and moves around the world
-//non-follow overview, the player is in a world where the camera doesnt follow them, the whole game world is just the window
-//no player - used for games where the player is not a focal point, turned based stuff or anything like that
-var overview = false;
-var nFOverview = true;
-var nPO = false;
-var fov = { //fov is only used for overview follow games
-    x: 400,
-    y: 200
-}
 var scene = 1;
 function start(){
     scene = 1;
@@ -526,7 +528,6 @@ function runGame(){
             scene9(null);
             break;
     }
-    fixRotatingObjects();
     Object.keys(clickInput).forEach(function(key) {
         clickInput[key] = false;     
     });
@@ -677,6 +678,8 @@ function applyGravity(a){
 function switchScene(a){
     gameObjects = [];
     nullObjects = [];
+    buttons = [];
+    ui = [];
     scene = a;
     switch(a){
         case 1:
