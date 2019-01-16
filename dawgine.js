@@ -583,12 +583,25 @@ function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for(var i = 0; i < nullObjects.length; i++){
         var tempObject = nullObjects[i];
+        if(tempObject.gravity != null){
+            applyGravity(tempObject);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
+        }
         if(tempObject.color != null){
             ctx.fillStyle = tempObject.color;
             ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
-        else if(tempObject.image != null){
+        if(tempObject.image != null){
             ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(-tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
         }
         if(tempObject.text != null){
             ctx.textAlign = "center";
@@ -611,7 +624,7 @@ function draw(){
             ctx.fillStyle = tempObject.color;
             ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
-        else if(tempObject.image != null){
+        if(tempObject.image != null){
             ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
         if(tempObject.rotation != null){
@@ -628,12 +641,25 @@ function draw(){
     }
     for(var i = 0; i < buttons.length; i++){
         var tempObject = buttons[i];
+        if(tempObject.gravity != null){
+            applyGravity(tempObject);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
+        }
         if(tempObject.color != null){
             ctx.fillStyle = tempObject.color;
             ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
-        else if(tempObject.image != null){
+        if(tempObject.image != null){
             ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(-tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
         }
         if(tempObject.text != null){
             ctx.textAlign = "center";
@@ -644,12 +670,25 @@ function draw(){
     }
     for(var i = 0; i < ui.length; i++){
         var tempObject = ui[i];
+        if(tempObject.gravity != null){
+            applyGravity(tempObject);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
+        }
         if(tempObject.color != null){
             ctx.fillStyle = tempObject.color;
             ctx.fillRect((tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
         }
-        else if(tempObject.image != null){
+        if(tempObject.image != null){
             ctx.drawImage(tempObject.image,(tempObject.x - tempObject.sizeX/2) * scaleX,(tempObject.y - tempObject.sizeY/2) * scaleY,tempObject.sizeX * scaleX,tempObject.sizeY * scaleY);
+        }
+        if(tempObject.rotation != null){
+            ctx.translate(tempObject.x * scaleX,tempObject.y * scaleY);
+            ctx.rotate(-tempObject.rotation);
+            ctx.translate(-tempObject.x * scaleX,-tempObject.y * scaleY);
         }
         if(tempObject.text != null){
             ctx.textAlign = "center";
