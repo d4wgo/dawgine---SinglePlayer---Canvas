@@ -714,6 +714,73 @@ function applyGravity(a){
         }
     }
 }
+function loadNew(a){
+    var load = a;
+    var eachObj = load.split(">");
+    for(var i = 0; i < eachObj.length; i++){
+        var eachElement = eachObj[i].split("^");
+        var type;
+        var id;
+        var x;
+        var y;
+        var sX;
+        var sY;
+        var color = null;
+        var image = null;
+        var rotation = null;
+        for(var j = 0; j < eachElement.length; j++){
+            var element = eachElement[j].split("=");
+            var elementN = element[0];
+            var elementB = element[1];
+            if(elementN == "type"){
+                type = elementB;
+            }
+            else if(elementN == "id"){
+                id = elementB;
+            }
+            else if(elementN == "x"){
+                x = parseInt(elementB);
+            }
+            else if(elementN == "y"){
+                y = parseInt(elementB);
+            }
+            else if(elementN == "sx"){
+                sX = parseInt(elementB);
+            }
+            else if(elementN == "sy"){
+                sY = parseInt(elementB);
+            }
+            else if(elementN == "color"){
+                color = elementB;
+            }
+            else if(elementN == "image"){
+                image = elementB;
+            }
+            else if(elementN == "rotation"){
+                rotation = parseFloat(elementB);
+            }
+        }
+        var gameO = new GameObject(id,x,y,sX,sY);
+        gameO.color = color;
+        if(image != null){
+            gameO.image = new Image();
+            gameO.image.src = image;
+        }
+        gameO.rotation = rotation
+        if(type == "gameObject"){
+            gameObjects.push(gameO);
+        }
+        else if(type == "nullObject"){
+            nullObjects.push(gameO);
+        }
+        else if(type == "button"){
+            buttons.push(gameO);
+        }
+        else{
+            ui.push(gameO);
+        }
+    }
+}
 function switchScene(a){
     gameObjects = [];
     nullObjects = [];
