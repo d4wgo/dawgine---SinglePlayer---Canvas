@@ -454,6 +454,8 @@ function getCursorPosition(canvas, event) {
 function pythagTheorem(a,b){
     return Math.sqrt(Math.pow(a,2) + Math.pow(b,2));
 }
+var oDistX = 0;
+var oDistY = 0;
 var scene = 1;
 function start(){
     scene = 1;
